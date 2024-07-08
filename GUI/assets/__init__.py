@@ -1,0 +1,5 @@
+# SETTINGS BASE HOME
+ALIGNMENT_HOME = "center"
+
+# AUDIO_PATH
+AUDIO_OUTPUT = "assets\\output.wav"
