@@ -4,8 +4,6 @@ import assets
 import sounddevice as sd
 from controls.button import Button
 import matplotlib.pyplot as plt
-import librosa
-import librosa.display
 import numpy as np
 
 
@@ -54,9 +52,6 @@ def main(page: ft.Page):
     SAMPLE_RATE = 44100
     WINDOW_SIZE = 1024
     HOP_SIZE = 256
-    data, sr = librosa.load(path, sr=SAMPLE_RATE, duration=10)
-    print(data)
-    print(sr)
     
     
     page.add(record_button)
