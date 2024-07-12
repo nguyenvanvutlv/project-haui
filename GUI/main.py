@@ -1,31 +1,37 @@
 import flet as ft
-# IMPORT SETTINGS BASE
 import assets
-import sounddevice as sd
-from controls.button import Button
-import matplotlib.pyplot as plt
 import numpy as np
-
+# , torch
+import sounddevice as sd
+import noisereduce as nr
+import soundfile as sf
+from controls.button import Button
+from models.audio import Recorder
 
 def main(page: ft.Page):
     page.horizontal_alignment = assets.ALIGNMENT_HOME
     
     def callback_audio(indata, frames, time, status):
-        print(indata[:, 0])
+        reduced_noise = nr.reduce_noise(y=indata[:, 0], sr=44100)
+        if output is None:
+            output = reduced_noise
+        else:
+            output = np.concatenate((output, reduced_noise), axis=0)
     
     def start_record(event: ft.OptionalEventCallable) -> None:
         record_button.disabled = True
         stop_button.disabled = False
         page.update()
         audio_recorder.start_recording(assets.AUDIO_OUTPUT)
-        stream.start()
+        stream_record.start()
         
     def stop_record(event: ft.OptionalEventCallable) -> None:
         record_button.disabled = False
         stop_button.disabled = True
         page.update()
         outputpath = audio_recorder.stop_recording()
-        stream.stop()
+        stream_record.stop()
+        stream_record.save()
         
     
     record_button = Button(text_display="Ghi âm",
@@ -38,8 +44,10 @@ def main(page: ft.Page):
                         on_pressed=stop_record,
                         disabled=True)
     
-    stream = sd.InputStream(callback = callback_audio, channels=1, samplerate=44100, dtype='int16')
+    stream_record: Recorder = Recorder(sample_rate=44100, channels=1)
+
     
+
     audio_recorder = ft.AudioRecorder(
         audio_encoder=ft.AudioEncoder.WAV,
         channels_num=1,
@@ -47,13 +55,6 @@ def main(page: ft.Page):
         sample_rate=44100
     )
     page.overlay.append(audio_recorder)
-    
-    path = "assets\\output.wav"
-    SAMPLE_RATE = 44100
-    WINDOW_SIZE = 1024
-    HOP_SIZE = 256
-    
-    
     page.add(record_button)
     page.add(stop_button)
 

@@ -1,7 +1,12 @@
+audio/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+test.py
+
+assets/docx/
 
 # C extensions
 *.so
