@@ -9,8 +9,6 @@ from models.layouts.record_view import RecordView
 
 
 def main(page: ft.Page):
-
-
     main_app: MainApp = MainApp().create_object(page = page)
     main_app.settings_windows(assets.WIDTH, assets.HEIGHT)
     home_view = HomeView().create_object(main_app = main_app)

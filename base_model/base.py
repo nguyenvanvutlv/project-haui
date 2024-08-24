@@ -2,6 +2,7 @@ import flet as ft
 from flet_route import Params, Basket
 from abc import abstractmethod
 
+
 class Field:
     def __init__(self, default=None):
         self.default = default
@@ -56,6 +57,7 @@ class MainApp(Model):
 class MainApp(Model):
     page: ft.Page = None
     list_record = None
+    audio_model = None
 
     @abstractmethod
     def create_object(self, **kwargs) -> MainApp:
