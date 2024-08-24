@@ -1,0 +1,7 @@
+WIDTH = 400
+HEIGHT = 800
+SAMPLE_RATE = 16000
+
+HOME_ROUTE = "/"
+RECORD_ROUTE = "/record"
+FILE_UPLOAD = "/file_upload"

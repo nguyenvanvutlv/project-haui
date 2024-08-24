@@ -1,2 +1,9 @@
-# project-haui
-Đồ án tốt nghiệp HaUI
+# A project-haui Flet app
+
+An example of a minimal Flet app.
+
+To run the app:
+
+```
+flet run [app_directory]
+```
