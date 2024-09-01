@@ -1,3 +1,8 @@
+convert_model.py
+test.py
+test_mic.py
+assets/audio/
+assets/models/
 *.bin
 .idea/
 # Byte-compiled / optimized / DLL files

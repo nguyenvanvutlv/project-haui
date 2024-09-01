@@ -4,12 +4,16 @@ import asyncio, inspect
 
 class UpdateAction:
     def __init__(self, interval: float = 1.0,
-                 callback: callable = None) -> None:
+                 callback: callable = None, **kawrgs) -> None:
         self.interval = interval
         self.callback = callback
         self.__time_left = 0
         self.timer = None
+        self.kwargs = kawrgs
         self.is_running: bool = False
+
+    def update_kwargs(self, **kwargs):
+        self.kwargs = kwargs
 
     def start(self) -> None:
         self.__time_left = 1
@@ -25,7 +29,7 @@ class UpdateAction:
 
     def run_callback(self):
         if inspect.iscoroutinefunction(self.callback):
-            asyncio.run(self.callback())
+            asyncio.run(self.callback(**self.kwargs))
         else:
-            self.callback()
+            self.callback(**self.kwargs)
         self.schedule_next()

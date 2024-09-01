@@ -1,28 +1,27 @@
 import flet as ft
-import assets
-from base_model.base import MainApp
 from flet_route import path, Routing
-
-from models.layouts.fileupload_view import FileLoadView
-from models.layouts.home_view import HomeView
-from models.layouts.record_view import RecordView
+from assets import HOME_ROUTE, WIDTH, HEIGHT, SETTINGS_ROUTE, FILEUPLOAD_ROUTE, MIC_ROUTE, CURRENT_AUDIO
+from base_model.base import MainApp
+from views.controller import HomeViewController, FileUploadController, MicController, CurrentAudioController
 
 
 def main(page: ft.Page):
-    main_app: MainApp = MainApp().create_object(page = page)
-    main_app.settings_windows(assets.WIDTH, assets.HEIGHT)
-    home_view = HomeView().create_object(main_app = main_app)
-    record_view = RecordView().create_object(main_app = main_app)
-    fileupdate_view = FileLoadView().create_object(main_app = main_app)
+    app = MainApp(page)
+    app.settings_windows()
+    homeview = HomeViewController(app)
+    fileuploadview = FileUploadController(app)
+    micview = MicController(app)
+    current_audio = CurrentAudioController(app)
     app_routes = [
-        path(url = assets.HOME_ROUTE, clear = True, view = home_view.view),
-        path(url = assets.RECORD_ROUTE, clear = True, view = record_view.view),
-        path(url = assets.FILE_UPLOAD, clear = True, view = fileupdate_view.view)
+        path(url = HOME_ROUTE, clear = True, view = homeview.view),
+        path(url = FILEUPLOAD_ROUTE, clear = True, view = fileuploadview.view),
+        path(url = MIC_ROUTE, clear = True, view = micview.view),
+        path(url = CURRENT_AUDIO, clear = True, view = current_audio.view)
     ]
     Routing(
         page = page,
         app_routes = app_routes
     )
-    page.go(page.route)
-
+    page.go(HOME_ROUTE)
+    page.update()
 ft.app(main)

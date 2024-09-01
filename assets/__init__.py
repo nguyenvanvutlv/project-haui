@@ -1,13 +1,12 @@
-WIDTH = 400
+WIDTH = 600
 HEIGHT = 800
-SAMPLE_RATE = 16000
-INPUT_SAMPLE_RATE = 16000
-ENERGY_THRESHOLD = 3000
-RECORD_TIMEOUT = 3
 
 HOME_ROUTE = "/"
-RECORD_ROUTE = "/record"
-FILE_UPLOAD = "/file_upload"
+SETTINGS_ROUTE = "/settings"
+FILEUPLOAD_ROUTE = "/upload"
+MIC_ROUTE = "/mic"
+CURRENT_AUDIO = "/current_audio"
 
 
-MODEL_WHISPER = 'assets\\small_convert.bin'
+settings_path = "assets/settings.json"
+INPUT_SAMPLE_RATE = 16000
