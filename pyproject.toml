@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "project-haui"
+version = "0.1.0"
+description = "Đồ án tốt nghiệp chuyển giọng nói thành văn bản sử dụng whisper"
+authors = ["Nguyễn Văn Vũ"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+numpy = "1.26.4"
+flet = "0.23.2"
+flet-core = "0.23.2"
+flet-runtime = "0.23.2"
+flet-route = "0.3.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
