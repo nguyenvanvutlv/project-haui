@@ -1,0 +1,30 @@
+[
+    {
+        "id": 0,
+        "path": "assets/audios/1.wav",
+        "sample_rate": 16000,
+        "channels": 1,
+        "text": "thời tiết hôm nay như thế nào"
+    },
+    {
+        "id": 1,
+        "path": "assets/audios/2.wav",
+        "sample_rate": 16000,
+        "channels": 1,
+        "text": "thời tiết hôm nay như thế nào"
+    },
+    {
+        "id": 2,
+        "path": "assets/audios/3.wav",
+        "sample_rate": 16000,
+        "channels": 1,
+        "text": ""
+    },
+    {
+        "id": 3,
+        "path": "assets/audios/4.wav",
+        "sample_rate": 16000,
+        "channels": 1,
+        "text": ""
+    }
+]

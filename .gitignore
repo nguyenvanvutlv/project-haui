@@ -1,10 +1,7 @@
-convert_model.py
-test.py
-test_mic.py
-assets/audio/
-assets/models/
-*.bin
 .idea/
+test.py
+sample1.mp4
+assets/models/*.bin
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
