@@ -1,9 +1,10 @@
+import json
 from abc import abstractmethod
 
 import flet as ft
 from flet_route import Params, Basket
 
-from assets import HOME_ROUTE
+from assets import HOME_ROUTE, SETTINGS_JSON
 from base.mainapp import MainApp
 from view import BaseView
 from view.settings.settings_component import SettingsComponent
@@ -35,6 +36,13 @@ class SettingsView(BaseView):
             event.page.overlay.append(snack_bar)
             snack_bar.open = True
         self.settings_gpu.button.value = event.control.value and torch.cuda.is_available()
+        self.main_app.global_settings.gpu = self.settings_gpu.button.value
+        self.main_app.global_settings.fp16 = self.settings_gpu.button.value
+        self.main_app.global_settings.device = "cuda" if self.main_app.global_settings.gpu else "cpu"
+
+        dict_ = self.main_app.global_settings.dict()
+        with open(SETTINGS_JSON, "w", encoding = 'utf-8') as file:
+            json.dump(dict_, file, ensure_ascii=False)
         event.page.update()
 
     @abstractmethod

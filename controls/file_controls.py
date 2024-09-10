@@ -20,14 +20,15 @@ class FileControls(FileView):
         chunks_length = 10
         for index_chunk in range(0, len(audio_np), chunks_length * self.main_app.global_settings.sample_rate):
             chunk = audio_np[index_chunk: index_chunk + chunks_length * self.main_app.global_settings.sample_rate]
-            # Do something with the chunk
             chunk = reduce_noise(chunk, self.main_app.global_settings.sample_rate)
             segments = self.main_app.vad.get_speech(chunk, self.main_app.global_settings.sample_rate)
             for index_segment, segment in enumerate(segments):
                 audio_segment = chunk[segment['start'] : segment['end']]
-                print("start")
-                result = model_whisper.transcribe(audio = audio_segment, language = "vi", beam_size = 4, fp16 = False)
-                print(result['text'])
+                result = model_whisper.transcribe(audio = audio_segment, language = "vi",
+                                                beam_size = self.main_app.global_settings.beam_size,
+                                                fp16 = self.main_app.global_settings.fp16)
+
+                print(result)
                 self.line += ' ' + result['text']
 
         self.update_line.stop()

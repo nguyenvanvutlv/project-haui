@@ -1,6 +1,5 @@
 import asyncio
 from abc import abstractmethod
-
 import flet as ft
 import pygame
 from flet_route import Params, Basket
@@ -10,8 +9,11 @@ from base.data import Audio
 from base.mainapp import MainApp
 from models import UpdateAction
 from models.record.read_file import read_audio
+from models.threads import run_async
 from view import BaseView
 from view.file_view.file_component import FileComponent
+
+import threading
 
 
 class FileView(BaseView):
@@ -47,7 +49,7 @@ class FileView(BaseView):
         )
 
         self.line = ""
-        self.message = ft.Row(controls = [])
+        self.message = ft.Text("", size = 25, weight = ft.FontWeight.W_100)
         self.update_line = UpdateAction(interval = 1.02, callback = self.update_line_callback)
         self.action_sheet = ft.CupertinoActionSheet(
             title=ft.Row([ft.Text("Kết quả", size = 25)]),
@@ -69,11 +71,7 @@ class FileView(BaseView):
         self.update_second_slicer = UpdateAction(interval=0.5, callback = self.update_second_slicer_callback)
 
     def update_line_callback(self):
-        print(self.line)
-        print(self.line.split())
-        for index in range(0, len(self.line.split()), 10):
-            lines = ' '.join(self.line.split()[index: min(index + 10, len(self.line.split()))])
-            self.message.controls.append(ft.Text(lines, size = 15))
+        self.message.value = self.line
         try:
             self.main_app.page.update()
         except:
@@ -101,16 +99,20 @@ class FileView(BaseView):
     async def play_audio(self, event: ft.ControlEvent):
         self.is_running = not self.is_running
         if self.is_running:
-            self.message.controls.clear()
+            self.message.value = ""
+            self.line = ""
             pygame.mixer.music.load(self.current_audio.path)  # Change this to your audio file
             pygame.mixer.music.play()
             self.update_second_slicer.start()
             self.icon_play.icon = ft.icons.PAUSE_CIRCLE
             event.page.update()
             self.update_line.start()
+            await asyncio.sleep(3)
 
             if self.status_init:
-                asyncio.create_task(self.enhance_audio(self.current_audio.path))
+                thread = threading.Thread(target = run_async,
+                                args = (self.enhance_audio, self.current_audio.path))
+                thread.start()
                 self.status_init = False
         else:
             self.icon_play.icon = ft.icons.PLAY_CIRCLE
@@ -157,8 +159,13 @@ class FileView(BaseView):
         if len(self.content.controls) != len(self.main_app.audios):
             self.update_list()
             self.status_init = True
+
+            self.current_audio = self.main_app.audios[len(self.main_app.audios) - 1]
+            audio_np = read_audio(self.current_audio.path, self.main_app.global_settings.sample_rate,
+                                  self.main_app.global_settings.channels)
+            self.end_time.value = str(int(len(audio_np) / self.main_app.global_settings.sample_rate)) + "s"
             page.open(self.bottom_sheet)
             page.update()
-            self.current_audio = self.main_app.audios[len(self.main_app.audios) - 1]
+
 
         return base_view

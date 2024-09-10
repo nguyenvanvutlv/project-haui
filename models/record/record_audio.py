@@ -1,6 +1,7 @@
 import asyncio
 import pyaudio
 import numpy as np
+import speech_recognition
 import torch
 
 from base.models import Record, ModelVads
@@ -11,45 +12,31 @@ class RecordAudio(Record):
         super().__init__()
         self.chunk_size = 1024
 
-    # def callback(self, in_data, frame_count, time_info, status):
-    #     if self.is_recording:
-    #         self.frames.append(in_data)
-    #     print(self.is_recording, type(in_data))
-    #     return in_data, pyaudio.paContinue
-
-    async def _record_loop(self):
-        while self.is_recording:
-            if self.stream is not None and self.stream.is_active():
-                data = self.stream.read(self.chunk_size)
-                self.frames.append(data)
-            await asyncio.sleep(0.01)
+    def callback(self, _, audio: speech_recognition.AudioData):
+        self.data_queue.put(audio.get_raw_data())
+        print("RECORD...")
 
     async def start_record(self, sample_rate : int, channels: int):
         await asyncio.sleep(1)
-        self.frames.clear()
-        self.p = pyaudio.PyAudio()
-        self.stream = self.p.open(format = pyaudio.paInt16,
-                                  channels = channels,
-                                  rate = sample_rate,
-                                  input = True,
-                                  frames_per_buffer = self.chunk_size)
-        self.is_recording = True
-        asyncio.create_task(self._record_loop())
-        print("start record")
+        with self.source:
+            self.recorder.adjust_for_ambient_noise(self.source)
+
+        self.stopper = self.recorder.listen_in_background(self.source,
+                                self.callback, phrase_time_limit = self.record_timeout)
+
         return
 
     async def end_record(self):
         await asyncio.sleep(1)
-        if self.stream:
-            self.stream.stop_stream()
-            self.stream.close()
-        self.p.terminate()
-        self.stream = None
+        if self.stopper is not None:
+            await self.stopper(wait_for_stop=True)
+            self.stopper = None
 
     def get_numpy(self) -> np.ndarray | None:
-        if len(self.frames):
-            audio_np = np.frombuffer(b''.join(self.frames), dtype = np.int16).astype(np.float32) / 32768.0
-            return audio_np
+        # if len(self.data_queue.queue):
+        #     audio_np = np.frombuffer(b''.join(self.frames), dtype = np.int16).astype(np.float32) / 32768.0
+        #     return audio_np
+        # return None
         return None
 
 

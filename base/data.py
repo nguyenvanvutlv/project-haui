@@ -9,6 +9,9 @@ class Settings:
     channels : int
     models: list
     gpu: bool = False
+    fp16: bool = False
+    device: str = ""
+    beam_size : int = 4
 
     def dict(self):
         return asdict(self)

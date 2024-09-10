@@ -3,21 +3,28 @@ from abc import abstractmethod
 import numpy as np
 import pyaudio
 import soundfile
+from queue import Queue
+import speech_recognition as sr
 
 
 class Record:
-    def __init__(self):
-        self.p = pyaudio.PyAudio()
-        self.stream = None
-        self.frames = []
-        self.is_recording = False
+    def __init__(self, sample_rate = 16000, energy_threshold = 1000,
+                 dynamic_energy_threshold = False):
+
+        self.data_queue = Queue()  # dữ liệu
+        self.recorder = sr.Recognizer()
+        self.recorder.energy_threshold = energy_threshold
+        self.recorder.dynamic_energy_threshold = dynamic_energy_threshold
+        self.source = sr.Microphone(sample_rate = sample_rate)
+        self.record_timeout = 2
+        self.stopper = None
 
     @abstractmethod
     async def start_record(self, sample_rate : int, channels: int):
         pass
 
     @abstractmethod
-    def callback(self, in_data, frame_count, time_info, status):
+    def callback(self, _, audio: sr.AudioData):
         pass
 
 
@@ -35,7 +42,7 @@ class Record:
 
 
     def clear_record(self):
-        self.frames.clear()
+        self.data_queue.queue.clear()
 
 class ModelVads(object):
     def __init__(self, threshold: float  = 0.4):

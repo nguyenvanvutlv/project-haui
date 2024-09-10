@@ -1,15 +1,1 @@
-{
-  "width" : 500,
-  "height" : 800,
-  "sample_rate" : 16000,
-  "channels" : 1,
-  "models" : [
-    {
-      "id"       : 0,
-      "name"     : "assets/models/small.bin",
-      "device"   : "cuda",
-      "in_memory": true
-    }
-  ],
-  "gpu" : false
-}
+{"width": 500, "height": 800, "sample_rate": 16000, "channels": 1, "models": [{"id": 0, "name": "assets/models/small.bin", "device": "cuda", "in_memory": true}], "gpu": true, "fp16": false, "device": "cuda"}

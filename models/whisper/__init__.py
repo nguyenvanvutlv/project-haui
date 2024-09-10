@@ -108,6 +108,7 @@ def load_model(
 
     Parameters
     ----------
+    fp16
     name : str
         one of the official model names listed by `whisper.available_models()`, or
         path to a model checkpoint containing the model dimensions and the model state_dict.

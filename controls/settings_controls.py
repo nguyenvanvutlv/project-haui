@@ -33,7 +33,8 @@ class SettingsControls(SettingsView):
                 dict_ = value.copy()
                 whisper_data = WhisperData(**dict_)
                 dict_.pop('id')
-                dict_['device'] = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+                # device = map_location
+                dict_['device'] = torch.device(self.main_app.global_settings.device)
                 whisper_data.objects = load_model(**dict_)
                 self.main_app.models_whisper.attach(whisper_data)
             snack_bar = ft.SnackBar(content = ft.Text("Đã tải xong mô hình"))
