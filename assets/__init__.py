@@ -1,5 +1,5 @@
 SETTINGS_JSON = "assets/settings.json"
-DATABASE_JSON = 'assets/database.json'
+DATABASE_JSON = 'assets/database_audio.json'
 
 
 HOME_ROUTE = '/'

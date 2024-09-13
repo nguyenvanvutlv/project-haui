@@ -4,7 +4,7 @@ import numpy as np
 import speech_recognition
 import torch
 
-from base.models import Record, ModelVads
+from base.models import Record, ModelVads, BaseRecord
 
 
 class RecordAudio(Record):
@@ -38,6 +38,75 @@ class RecordAudio(Record):
         #     return audio_np
         # return None
         return None
+    
+
+class RecordPyaudio(BaseRecord):
+    def __init__(self, sample_rate: int = 16000, channels: int = 1, **kwargs):
+        super().__init__(sample_rate, channels, **kwargs)
+        self.__pyaudio_object = pyaudio.PyAudio()
+        self.__stream = None
+
+    async def start_record(self):
+        self.__stream = self.__pyaudio_object.open(channels=self.channels, 
+                                                   rate = self.sample_rate,
+                                                   stream_callback = self.callback,
+                                                   **self.kwargs)
+        self.is_record = True
+        self.__stream.start_stream()
+
+    async def end_record(self):
+        if self.__stream is not None:
+            self.__stream.stop_stream()
+            self.__stream.close()
+    
+    def callback(self, in_data, frame_count, time_info, status):
+        super().callback(data = in_data)
+        return (in_data, pyaudio.paContinue)
+    
+
+class RecordSpeechRecognition(BaseRecord):
+    def __init__(self, sample_rate: int = 16000, channels: int = 1, **kwargs):
+        """
+            param:
+
+            sample_rate: int = 16000
+            channels: int = 1
+            kwargs:
+                energy_threshold: int = 1000
+                dynamic_energy_threshold: bool = False
+                device_index: int = None
+                chunk_size: int = 1024
+                record_timeout: int = 2
+                phrase_timeout = 3
+        """
+        super().__init__(sample_rate, channels, **kwargs)
+
+        self.__recognizer = speech_recognition.Recognizer()
+        self.__recognizer.energy_threshold = kwargs.get("energy_threshold", 1000)
+        self.__recognizer.dynamic_energy_threshold = kwargs.get("dynamic_energy_threshold", False)
+        self.__source = speech_recognition.Microphone(
+            device_index = self.kwargs.get("device_index", None),
+            sample_rate = self.sample_rate,
+            chunk_size = self.kwargs.get("chunk_size", 1024)
+        )
+        self.stopper = None
+
+    async def start_record(self):
+        with self.__source:
+            self.__recognizer.adjust_for_ambient_noise(
+                self.__source)
+        self.stopper = self.__recognizer.listen_in_background(
+            self.__source, self.callback, 
+            phrase_time_limit=self.kwargs.get('record_timeout', 2))
+        
+    async def end_record(self):
+        if self.stopper is not None:
+            self.stopper(wait_for_stop=True)
+            self.stopper = None
+
+    def callback(self, _, audio: speech_recognition.AudioData):
+        super().callback(data = audio.get_raw_data())
+        
 
 
 class ModelVad(ModelVads):

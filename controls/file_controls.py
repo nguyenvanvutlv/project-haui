@@ -27,8 +27,6 @@ class FileControls(FileView):
                 result = model_whisper.transcribe(audio = audio_segment, language = "vi",
                                                 beam_size = self.main_app.global_settings.beam_size,
                                                 fp16 = self.main_app.global_settings.fp16)
-
-                print(result)
                 self.line += ' ' + result['text']
 
         self.update_line.stop()

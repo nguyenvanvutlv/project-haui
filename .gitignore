@@ -1,3 +1,5 @@
+assets/audios/output_*.wav
+assets/database_audio.json
 .idea/
 test.py
 sample1.mp4

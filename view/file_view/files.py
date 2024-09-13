@@ -68,7 +68,8 @@ class FileView(BaseView):
         self.current_audio: Audio = None
         self.is_running: bool = False
 
-        self.update_second_slicer = UpdateAction(interval=0.5, callback = self.update_second_slicer_callback)
+        self.update_second_slicer = UpdateAction(interval=0.5, 
+                        callback = self.update_second_slicer_callback)
 
     def update_line_callback(self):
         self.message.value = self.line

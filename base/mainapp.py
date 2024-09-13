@@ -3,7 +3,7 @@ from base import Singleton, Manage
 import flet as ft
 import json
 from base.data import Settings, Audio
-from base.models import Record, ModelVads
+from base.models import Record, ModelVads, BaseRecord
 import pygame
 
 class ManageAudio(Manage):
@@ -33,10 +33,15 @@ class MainApp(metaclass = Singleton):
     record: Record = None
     vad : ModelVads = None
 
-    def __init__(self, page: ft.Page, record_audio, vad):
+    record_pyaudio : BaseRecord = None
+    record_speech : BaseRecord = None
+
+    def __init__(self, page: ft.Page, **kwargs):
         self.page = page
-        self.record = record_audio
-        self.vad = vad
+
+        self.record_pyaudio = kwargs.get("record_pyaudio", None)
+        self.record_speech = kwargs.get("record_speech", None)
+
         self.global_settings = Settings(
             **json.load(open(SETTINGS_JSON, "r", encoding = 'utf-8'))
         )

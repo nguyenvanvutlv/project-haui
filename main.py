@@ -6,14 +6,21 @@ from base.mainapp import MainApp
 from controls.file_controls import FileControls
 from controls.home_controls import HomeControls
 from controls.settings_controls import SettingsControls
-from models.record.record_audio import RecordAudio, ModelVad
+from models.record.record_audio import RecordPyaudio, RecordSpeechRecognition
+import pyaudio
 
 
 def main(page: ft.Page):
 
-    record : RecordAudio = RecordAudio()
-    model_vad : ModelVad = ModelVad()
-    app = MainApp(page, record, model_vad)
+    # bộ ghi âm từ pyaudio
+    record_pyaudio = RecordPyaudio(format = pyaudio.paInt16, 
+                            input = True, frames_per_buffer = 1024)
+    record_speech = RecordSpeechRecognition()
+
+
+    app = MainApp(page, record_pyaudio = record_pyaudio, 
+                            record_speech = record_speech)
+    
     home_controls = HomeControls(app)
     settings_controls = SettingsControls(app)
     files_controls = FileControls(app)

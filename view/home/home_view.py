@@ -32,7 +32,8 @@ class HomeView(BaseView):
         self.is_record: bool = False
 
         self.action_record = ft.CupertinoActionSheetAction(
-                    content = ft.IconButton(icon = ft.icons.CIRCLE, icon_size = 50, splash_radius = 5,
+                    content = ft.IconButton(icon = ft.icons.CIRCLE, icon_size = 50, 
+                                            splash_radius = 5,
                                 on_click = self.record),
                     is_default_action=True,
         )
