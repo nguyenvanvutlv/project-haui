@@ -1,3 +1,19 @@
+from abc import abstractmethod
+
+class A:
+    @abstractmethod
+    def a(self, *args, **kwargs):
+        pass
+
+class B(A):
+    def a(self, *args, **kwargs):   
+        print(args, kwargs)
+
+
+b = B()
+
+b.a(name = "Hello")
+
 # from models.record.record_audio import RecordPyaudio, RecordSpeechRecognition
 # import pyaudio
 # import asyncio

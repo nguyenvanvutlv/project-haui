@@ -3,7 +3,7 @@ import pyaudio
 import numpy as np
 import speech_recognition
 import torch
-
+from pyannote.audio import Pipeline
 from base.models import Record, ModelVads, BaseRecord
 
 
@@ -126,3 +126,26 @@ class ModelVad(ModelVads):
     def get_speech(self, audio, sample_rate):
         return self.__get_speech_timestamps(audio,
                             self.__model, sampling_rate=sample_rate, threshold=self.threshold)
+
+
+class VoiceActivityDetection(ModelVads):
+    def __init__(self):
+        super().__init__()
+        self.__load_model(checkpoint_path = "assets/models/vad.yaml")
+
+    def __load_model(self, *args, **kwargs):
+        self.__models = Pipeline.from_pretrained(**kwargs)
+
+    def get_speech(self, audio: np.ndarray, sample_rate: int):
+        audio_chunk_torch = torch.as_tensor(audio).reshape(1, -1)
+        segments = self.__models({"waveform": audio_chunk_torch, 
+                            "sample_rate": sample_rate})
+        results = []
+        for segment, _, _ in segments.itertracks(yield_label=True):
+            start = int(segment.start * sample_rate)
+            end = int(segment.end * sample_rate)
+            results.append({
+                "start": start,
+                "end": end
+            })
+        return results

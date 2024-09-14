@@ -6,6 +6,7 @@ import soundfile
 from queue import Queue
 import speech_recognition as sr
 from datetime import datetime
+from pyannote.audio import Pipeline
 
 
 class BaseRecord:
@@ -122,14 +123,13 @@ class Record:
 
 class ModelVads(object):
     def __init__(self, threshold: float  = 0.4):
-        self.__model = None
-        self.__get_speech_timestamps = None
         self.threshold = threshold
+        self.__models = None
 
     @abstractmethod
-    def __load_model(self, repo_or_dir, model, onnx):
+    def __load_model(self, *args, **kwargs):
         pass
 
     @abstractmethod
-    def get_speech(self, audio, sample_rate):
+    def get_speech(self, audio: np.ndarray, sample_rate : int):
         pass

@@ -28,19 +28,16 @@ class MainApp(metaclass = Singleton):
     models_whisper: ManageWhispers = ManageWhispers()
 
 
-
-    # record audio
-    record: Record = None
-    vad : ModelVads = None
-
     record_pyaudio : BaseRecord = None
     record_speech : BaseRecord = None
+    vad: ModelVads = None
 
     def __init__(self, page: ft.Page, **kwargs):
         self.page = page
 
         self.record_pyaudio = kwargs.get("record_pyaudio", None)
         self.record_speech = kwargs.get("record_speech", None)
+        self.vad = kwargs.get('vad', None)
 
         self.global_settings = Settings(
             **json.load(open(SETTINGS_JSON, "r", encoding = 'utf-8'))

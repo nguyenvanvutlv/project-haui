@@ -27,7 +27,7 @@ class HomeView(BaseView):
 
         self.pick_files = ft.FilePicker(on_result = self.pick_files_result)
 
-        self.line = []
+        self.line = ['']
         self.message = ft.Text("", size = 25)
         self.is_record: bool = False
 
@@ -40,7 +40,7 @@ class HomeView(BaseView):
 
         self.action_sheet = ft.CupertinoActionSheet(
             title=ft.Row([ft.Text("Ghi âm", size = 25)], alignment=ft.MainAxisAlignment.CENTER),
-            message=ft.Row([self.message], alignment=ft.MainAxisAlignment.CENTER),
+            message=self.message,
             cancel=ft.CupertinoActionSheetAction(
                 content=ft.Text("Thoát"),
                 on_click = self.close_form_record
