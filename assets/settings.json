@@ -1,17 +1,12 @@
 {
-    "width": 500,
-    "height": 800,
-    "sample_rate": 16000,
-    "channels": 1,
-    "models": [
+    "audios" : [
         {
-            "id": 0,
-            "name": "assets/models/small.bin",
-            "device": "cuda",
-            "in_memory": true
+            "id" : 0,
+            "path" : "hehe",
+            "name" : "hehe",
+            "sample_rate" : 16000,
+            "channels" : 1,
+            "text" : "hehe"
         }
-    ],
-    "gpu": true,
-    "fp16": false,
-    "device": "cuda"
+    ]
 }

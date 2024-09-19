@@ -1,10 +1,7 @@
-from abc import abstractmethod
-from base.mainapp import MainApp
 import flet as ft
+from abc import abstractmethod
 from flet_route import Params, Basket
-
-
-
+from base.system import MainApp
 
 class BaseView(object):
     def __init__(self, main_app: MainApp):
