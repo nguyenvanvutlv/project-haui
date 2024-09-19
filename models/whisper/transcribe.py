@@ -8,7 +8,7 @@ import numpy as np
 import torch
 import tqdm
 
-from .audio import (
+from models.whisper.audio import (
     FRAMES_PER_SECOND,
     HOP_LENGTH,
     N_FRAMES,
@@ -17,10 +17,10 @@ from .audio import (
     log_mel_spectrogram,
     pad_or_trim,
 )
-from .decoding import DecodingOptions, DecodingResult
-from .timing import add_word_timestamps
-from .tokenizer import LANGUAGES, TO_LANGUAGE_CODE, get_tokenizer
-from .utils import (
+from models.whisper.decoding import DecodingOptions, DecodingResult
+from models.whisper.timing import add_word_timestamps
+from models.whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE, get_tokenizer
+from models.whisper.utils import (
     exact_div,
     format_timestamp,
     get_writer,
@@ -31,7 +31,7 @@ from .utils import (
 )
 
 if TYPE_CHECKING:
-    from .model import Whisper
+    from models.whisper.model import Whisper
 
 
 def transcribe(
@@ -382,7 +382,7 @@ def transcribe(
 
 
 def cli():
-    from . import available_models
+    from models.whisper import available_models
 
     def valid_model_name(name):
         if name in available_models() or os.path.exists(name):

@@ -1,3 +1,3 @@
-from .transcribe import cli
+from models.whisper.transcribe import cli
 
 cli()

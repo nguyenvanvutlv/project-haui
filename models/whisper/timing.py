@@ -9,11 +9,11 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from .audio import HOP_LENGTH, SAMPLE_RATE, TOKENS_PER_SECOND
-from .tokenizer import Tokenizer
+from models.whisper.audio import HOP_LENGTH, SAMPLE_RATE, TOKENS_PER_SECOND
+from models.whisper.tokenizer import Tokenizer
 
 if TYPE_CHECKING:
-    from .model import Whisper
+    from models.whisper.model import Whisper
 
 
 def median_filter(x: torch.Tensor, filter_width: int):

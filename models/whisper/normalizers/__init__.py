@@ -1,2 +1,2 @@
-from .basic import BasicTextNormalizer as BasicTextNormalizer
-from .english import EnglishTextNormalizer as EnglishTextNormalizer
+from models.whisper.normalizers.basic import BasicTextNormalizer as BasicTextNormalizer
+from models.whisper.normalizers.english import EnglishTextNormalizer as EnglishTextNormalizer

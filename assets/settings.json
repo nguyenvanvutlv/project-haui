@@ -8,5 +8,9 @@
             "channels" : 1,
             "text" : "hehe"
         }
-    ]
+    ],
+    "model" : {
+        "whisper" : "assets/tempp/small.pt",
+        "vad" : ""
+    }
 }

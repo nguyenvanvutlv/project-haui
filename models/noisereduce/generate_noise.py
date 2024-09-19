@@ -1,6 +1,9 @@
 import numpy as np
 
 # from https://stackoverflow.com/questions/33933842/how-to-generate-noise-in-frequency-range-with-numpy
+"""
+    Tạo nhiễu audio có tần số bằng numpy    
+"""
 def fftnoise(f):
     """
     """

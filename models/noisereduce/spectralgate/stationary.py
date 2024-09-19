@@ -1,7 +1,7 @@
 from models.noisereduce.spectralgate.base import SpectralGate
 import numpy as np
 from scipy.signal import fftconvolve, stft, istft
-from .utils import _amp_to_db
+from models.noisereduce.spectralgate.utils import _amp_to_db
 
 
 class SpectralGateStationary(SpectralGate):
