@@ -16,7 +16,21 @@ class DataAudio(BaseDataClass):
     channels: int
     text: str
 
+@dataclass
+class DataRecord(BaseDataClass):
+    sample_rate: int = 16000
+    channels : int = 1
+
 
 @dataclass
 class DataWhisper(BaseDataClass):
-    text: str
+    path: str = ""
+    fp16: bool = False
+    language: str = "vi"
+    gpu: bool = False
+
+
+@dataclass
+class DataVoiceActivityDetection(BaseDataClass):
+    path: str = ""
+    min_duration: float = 0.3

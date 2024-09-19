@@ -1,16 +1,24 @@
 {
-    "audios" : [
+    "audios": [
         {
-            "id" : 0,
-            "path" : "hehe",
-            "name" : "hehe",
-            "sample_rate" : 16000,
-            "channels" : 1,
-            "text" : "hehe"
+            "id": 1,
+            "name": "AUDIO 1",
+            "path": "assets/audios/1.wav",
+            "sample_rate": 16000,
+            "channels": 1,
+            "text": "Ghi âm"
         }
     ],
-    "model" : {
-        "whisper" : "assets/tempp/small.pt",
-        "vad" : ""
+    "model": {
+        "whisper": "assets/models/pho.bin",
+        "vad": "assets/models/pytorch_model.bin"
+    },
+    "windows": {
+        "height": 600,
+        "width": 800
+    },
+    "record": {
+        "sample_rate": 16000,
+        "channels": 1
     }
 }

@@ -10,6 +10,7 @@ from pyannote.audio import Model
 from pyannote.audio.pipelines import VoiceActivityDetection
 import torch
 import matplotlib.pyplot as plt
+import time
 
 
 def read_audio(path: str,
@@ -74,68 +75,78 @@ def find_silence_intervals(rms, threshold, hop_length, sample_rate):
     return silence_intervals_in_time
 
 
-# model_whisper = load_model("assets/temp/small.pt", device = "cpu", 
-#                         in_memory=True, weights_only=True)
+def split_audio(audio, segment_length=10000):  # segment_length tính bằng milliseconds (10s = 10000ms)
+    segments = []
+    audio_length = len(audio)  # Độ dài audio tính bằng milliseconds
+    i = 0
+    
+    # Cắt từng đoạn audio 10 giây
+    while i + segment_length <= audio_length:
+        segment = audio[i:i + segment_length]
+        segments.append(segment)
+        i += segment_length
+    
+    # Xử lý đoạn audio cuối cùng
+    remaining_length = audio_length - i
+    if remaining_length > 0:
+        last_segment = audio[i:]  # Đoạn audio còn lại
+        if remaining_length > segment_length / 2:  # Nếu đoạn cuối dài hơn 5 giây, giữ nguyên
+            segments.append(last_segment)
+        else:  # Nếu đoạn cuối ngắn hơn hoặc bằng 5 giây, nối với đoạn trước đó
+            if segments:
+                segments[-1] = np.concatenate((segments[-1], last_segment))  # Nối vào đoạn trước đó
+            else:
+                segments.append(last_segment)  # Nếu không có đoạn trước đó, thêm vào danh sách
 
-# model_vad = Model.from_pretrained('assets/temp/pytorch_model.bin', map_location='cpu')
-# pipeline = VoiceActivityDetection(segmentation=model_vad)
-# HYPER_PARAMETERS = {
-#   # remove speech regions shorter than that many seconds.
-#   "min_duration_on": 0.3,
-#   # fill non-speech regions shorter than that many seconds.
-#   "min_duration_off": 0.0
-# }
-# pipeline.instantiate(HYPER_PARAMETERS)
+    return segments
 
 
-audio = read_audio(path = "assets/audios/sample_2.mp4")
+model_whisper = load_model("assets/models/pho.bin", 
+                        device = "cuda" if torch.cuda.is_available() else "cpu", 
+                        in_memory=True)
+
+model_vad = Model.from_pretrained('assets/models/pytorch_model.bin', map_location='cpu')
+pipeline = VoiceActivityDetection(segmentation=model_vad)
+HYPER_PARAMETERS = {
+  # remove speech regions shorter than that many seconds.
+  "min_duration_on": 0.3,
+  # fill non-speech regions shorter than that many seconds.
+  "min_duration_off": 0.0
+}
+pipeline.instantiate(HYPER_PARAMETERS)
+
+
+audio = read_audio(path = "assets/audios/9.mp4")
 
 sample_rate = 16000
 frame_length = 2048
 hop_length = 512
-chunks = 10
+chunk = 10
 
 
-
-# rms = calculate_rms(audio, frame_length, hop_length)
-
-# # Tính thời gian tương ứng với từng khung
-# times = np.arange(len(rms)) * hop_length / sample_rate
-
-
-# # Ngưỡng xác định khoảng lặng và ngưỡng độ dài tối thiểu
-# silence_threshold = 0.3
-
-
-# silent_frame = find_silence_intervals(rms, silence_threshold, hop_length, sample_rate)
-# silent_frames = np.zeros_like(rms, dtype=bool)
-
-
-# output = []
-
-# for index, (_len, _end, _start) in enumerate(silent_frame):
-#     chunk = audio[int(_start * sample_rate):int(_end * sample_rate)]
-#     output.append(audio[int(_start * sample_rate):int(_end * sample_rate)])
-    
-# output = np.concatenate(output)
-# sf.write("OUTPUT/output.wav", output, sample_rate)
-    
-# áp dụng cho audio có độ dài 30s
-indexs = [index for index in range(0, len(audio), chunks * sample_rate)]
-
-for index in range(1, len(indexs)):
-    chunk = audio[indexs[index] - int((chunks / 4) * sample_rate) \
-        : min(indexs[index] + int((chunks / 4) * sample_rate), len(audio))]
-    rms = calculate_rms(chunk, frame_length, hop_length)
-    times = np.arange(len(rms)) * hop_length / sample_rate
-    silent_threshold = 0.2
-    silent_frame = find_silence_intervals(rms, silent_threshold, hop_length, sample_rate)
-    output = []
-    for _in, (_len, _end, _start) in enumerate(silent_frame):
-        print(_start, _end, abs(_len))
+chunks = split_audio(audio, segment_length=chunk * sample_rate)
+for i in chunks:
+    chunk_torch = torch.as_tensor(reduce_noise(i, sample_rate)).reshape(1, -1)
+    segments = pipeline({'waveform': chunk_torch, 'sample_rate': sample_rate})
+    for (segment, _, _) in segments.itertracks(yield_label=True):
+        current_chunk = i[int(segment.start * sample_rate):int(segment.end * sample_rate)]
         
-        chunk = audio[int(_start * sample_rate):int(_end * sample_rate)]
-        output.append(audio[int(_start * sample_rate):int(_end * sample_rate)])
-    output = np.concatenate(output)
-    sf.write(f"OUTPUT/{index}.wav", output, sample_rate)
-    print("\n")
+        start_time = time.time()
+        result = model_whisper.transcribe(
+            audio = current_chunk,
+            language = "vi"
+        )
+        end_time = time.time()
+        print(result['text'], end_time - start_time)
+
+    # rms = calculate_rms(chunk, frame_length, hop_length)
+    # times = np.arange(len(rms)) * hop_length / sample_rate
+    # silent_threshold = 0.2
+    # silent_frame = find_silence_intervals(rms, silent_threshold, hop_length, sample_rate)
+    # output = []
+    # for _in, (_len, _end, _start) in enumerate(silent_frame):
+    #     print(_start, _end, abs(_len))
+    #     output.append(chunk[int(_start * sample_rate):int(_end * sample_rate)])
+    # output = np.concatenate(output)
+    # sf.write(f"OUTPUT/{index}.wav", output, sample_rate)
+    # print("\n")

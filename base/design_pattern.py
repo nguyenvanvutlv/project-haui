@@ -12,6 +12,12 @@ class Manage(object):
         self.__data: list[BaseModel] = []
         self.__fields: dict[int, BaseModel] = {}
 
+    def __len__(self):
+        return len(self.__data)
+    
+    def __getitem__(self, index: int):
+        return self.__data[index]
+
     def add(self, data: BaseModel):
         if self.__fields.get(data.id) is not None:
             return False
@@ -28,3 +34,6 @@ class Manage(object):
 
     def search(self, id: int) -> BaseModel:
         return self.__fields.get(id)
+    
+    def save(self):
+        return [data.dict() for data in self.__data]
