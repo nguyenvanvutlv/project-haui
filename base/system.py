@@ -35,8 +35,10 @@ class MainApp(metaclass = Singleton):
     def __init__(self, page: ft.Page, **kwargs):
         self.page = page
 
-        for index, value in enumerate(kwargs.get('audios', [])):
+        for index, value in enumerate(kwargs.get('playlist', [])):
             self.audios.add(Audio(DataAudio(**value)))
+
+        print(len(self.audios))
 
         self.data_whisper.path = kwargs.get('model', {}).get('whisper', "")
         self.data_vad.path = kwargs.get('model', {}).get('vad', "")
