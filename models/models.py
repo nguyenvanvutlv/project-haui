@@ -80,7 +80,9 @@ class Whispers(BaseWhispers):
         try:
             result = self.model.transcribe(audio = data, 
                         language = self.data_whisper.language, beam_size = 4)
+            print(result)
         except Exception as e:
+            print(e)
             result = ""
         return self.post_process(result = result)
     
@@ -88,7 +90,7 @@ class Whispers(BaseWhispers):
     def post_process(self, **kwargs):
         # print("END_PIPELINE")
         try:
-            result = remove_special_characters(kwargs.get("result").get('text'))
+            result = remove_special_characters(kwargs.get("result").get('text')).replace('.', '')
         except:
             result = ""
         return result

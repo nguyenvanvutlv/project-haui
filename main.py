@@ -6,6 +6,7 @@ from templates.controls.home import HomeControls
 from templates.controls.playlist import PlayListControls
 from templates.controls.record import RecordControls
 from templates.view.settings import SettingView
+from templates.controls.file import FileControls
 import pygame
 
 
@@ -17,6 +18,7 @@ def main(page: ft.Page):
     playListControls = PlayListControls(app)
     recordControls = RecordControls(app)
     settingsView = SettingView(app)
+    fileControls = FileControls(app)
 
     app_routes = [
         path(url = assets.HOME_ROUTE, clear = True, 
@@ -26,7 +28,9 @@ def main(page: ft.Page):
         path(url = assets.RECORD_ROUTE, clear = True,
             view = recordControls.view),
         path(url = assets.SETTING_ROUTE, clear = True,
-            view = settingsView.view)
+            view = settingsView.view),
+        path(url = assets.FILE_ROUTE, clear = True,
+            view = fileControls.view)
     ]
     Routing(
         app_routes = app_routes,

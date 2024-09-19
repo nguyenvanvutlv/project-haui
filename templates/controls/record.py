@@ -95,7 +95,6 @@ class RecordControls(RecordView):
         if len(audio) / self.main_app.record_source.record_data.sample_rate < 5:
             snack_bar.content = flet.Text("Thời gian ghi âm quá ngắn vui lòng ghi âm lại")
         else:
-            print(len(self.main_app.audios))
             snack_bar.content = flet.Text("Lưu thành công")
             file_name = f"assets/audios/{len(self.main_app.audios) + 1}.wav"
             self.main_app.audios.add(
@@ -103,7 +102,7 @@ class RecordControls(RecordView):
                     id = len(self.main_app.audios) + 1,
                     name = "AUDIO " + str(len(self.main_app.audios) + 1),
                     path = file_name,
-                    text = "Ghi âm",
+                    text = self.textField.value,
                     sample_rate = self.main_app.record_source.record_data.sample_rate,
                     channels = self.main_app.record_source.record_data.channels
                 ))

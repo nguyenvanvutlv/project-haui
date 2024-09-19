@@ -1,5 +1,9 @@
 import numpy as np
 import re
+import ffmpeg
+from typing import Any
+from numpy import dtype
+
 
 def calculate_rms(signal, frame_length, hop_length):
     rms = []
@@ -61,3 +65,40 @@ def remove_special_characters(text):
     cleaned_text = re.sub(pattern, '', text)
     
     return cleaned_text
+
+def read_audio(path: str,
+        sample_rate: int = 16000, channel: int = 1,
+        format: str = 's16le') -> np.ndarray[Any, dtype[np.float32]]:
+    out, _ = (
+        ffmpeg
+        .input(path)
+        .output('pipe:', format=format, ac=channel, ar=sample_rate)
+        .run(capture_stdout=True, capture_stderr=True)
+    )
+    audio_data = np.frombuffer(out, dtype=np.int16).astype(np.float32) / 32768.0
+    return audio_data
+
+def split_audio(audio, segment_length=10000):  # segment_length tính bằng milliseconds (10s = 10000ms)
+    segments = []
+    audio_length = len(audio)  # Độ dài audio tính bằng milliseconds
+    i = 0
+    
+    # Cắt từng đoạn audio 10 giây
+    while i + segment_length <= audio_length:
+        segment = audio[i:i + segment_length]
+        segments.append(segment)
+        i += segment_length
+    
+    # Xử lý đoạn audio cuối cùng
+    remaining_length = audio_length - i
+    if remaining_length > 0:
+        last_segment = audio[i:]  # Đoạn audio còn lại
+        if remaining_length > segment_length / 2:  # Nếu đoạn cuối dài hơn 5 giây, giữ nguyên
+            segments.append(last_segment)
+        else:  # Nếu đoạn cuối ngắn hơn hoặc bằng 5 giây, nối với đoạn trước đó
+            if segments:
+                segments[-1] = np.concatenate((segments[-1], last_segment))  # Nối vào đoạn trước đó
+            else:
+                segments.append(last_segment)  # Nếu không có đoạn trước đó, thêm vào danh sách
+
+    return segments
