@@ -20,6 +20,7 @@ class RecordView(BaseView):
                                       content_padding=30,
                                       text_size = 20,
                                       cursor_color='black')
+        self.final_text = []
         
     
         self.button_start = ft.CupertinoActionSheetAction(
@@ -69,9 +70,11 @@ class RecordView(BaseView):
         self.update_second = UpdateAction(interval = 1, callback = self.update_seconds)
 
     def update_seconds(self, **kwargs):
-        audio_np = self.main_app.record_audio.get_data
-        seconds = len(audio_np) / self.main_app.record_audio.record_data.sample_rate
+        audio_np = self.main_app.record_source.get_data
+        seconds = len(audio_np) / self.main_app.record_source.record_data.sample_rate
         self.dislay_seconds.text = f"Thời gian: {int(seconds)}s"
+
+        self.textField.value = ' '.join(self.final_text)
         self.main_app.page.update()
         
     @abstractmethod

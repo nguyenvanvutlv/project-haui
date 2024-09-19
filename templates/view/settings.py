@@ -35,6 +35,7 @@ class SettingView(BaseView):
             snackbar.open = True
             self.main_app.page.update()
             await self.main_app.whispers.load_model()
+            await self.main_app.vads.load_model()
             snackbar = ft.SnackBar(
                 content =  ft.Text("Tải mô hình thành công")
             )

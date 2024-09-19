@@ -1,7 +1,7 @@
 import flet as ft
 from base.design_pattern import Singleton
 from base.design_pattern import Manage
-from base.models import Audio, RecordAudio, BaseWhispers
+from base.models import Audio, RecordAudio, BaseWhispers, BaseVAD
 from base.dataclass import DataAudio, DataWhisper, DataVoiceActivityDetection
 import torch
 import assets
@@ -27,8 +27,10 @@ class MainApp(metaclass = Singleton):
 
 
     record_audio: RecordAudio = None
+    record_source: RecordAudio = None
 
     whispers: BaseWhispers = None
+    vads: BaseVAD = None
 
     def __init__(self, page: ft.Page, **kwargs):
         self.page = page
@@ -45,17 +47,17 @@ class MainApp(metaclass = Singleton):
     def save(self):
         data = {
             "audios" : self.audios.save(),
-            "model" : {
-                "whisper" : "assets/models/small.pt",
-                "vad" : "assets/models/pytorch_model.bin"
+            "model": {
+                "whisper": "assets/models/pho.bin",
+                "vad": "assets/models/pytorch_model.bin"
             },
-            "windows" : {
-                "height" : 600,
-                "width" : 800
+            "windows": {
+                "height": 600,
+                "width": 800
             },
-            "record" : {
-                "sample_rate" : 16000,
-                "channels" : 1
+            "record": {
+                "sample_rate": 16000,
+                "channels": 1
             }
         }
         with open(assets.SETTINGS_JSON, 'w', encoding='utf-8') as f:
